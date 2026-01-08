@@ -1,0 +1,2 @@
+[console_scripts]
+mybudget = src.cli.main:cli
