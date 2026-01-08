@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Statistiques - MyBudget{% endblock %}
+
+{% block content %}
+<h2 style="color: #667eea; font-size: 2em; margin-bottom: 30px;">📈 Statistiques</h2>
+
+<div class="card">
+    <form method="GET" action="{{ url_for('statistics') }}" class="form-inline">
+        <div class="form-group">
+            <label for="year">Année</label>
+            <input type="number" id="year" name="year" value="{{ year }}" min="2020" max="2030">
+        </div>
+        
+        <div class="form-group">
+            <label for="month">Mois</label>
+            <input type="number" id="month" name="month" value="{{ month }}" min="1" max="12">
+        </div>
+        
+        <div class="form-group" style="display: flex; align-items: flex-end;">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">📊 Calculer</button>
+        </div>
+    </form>
+</div>
+
+{% if summary %}
+<div class="card">
+    <h2>📊 Résumé mensuel - {{ month }}/{{ year }}</h2>
+    
+    <div class="stats-grid">
+        <div class="stat-card success">
+            <h3>💵 Revenus</h3>
+            <div class="value">{{ "%.2f"|format(summary.total_income) }} €</div>
+        </div>
+        
+        <div class="stat-card danger">
+            <h3>💸 Dépenses</h3>
+            <div class="value">{{ "%.2f"|format(summary.total_expenses) }} €</div>
+        </div>
+        
+        <div class="stat-card">
+            <h3>💰 Balance</h3>
+            <div class="value">{{ "%.2f"|format(summary.balance) }} €</div>
+        </div>
+        
+        <div class="stat-card">
+            <h3>📝 Transactions</h3>
+            <div class="value">{{ summary.transaction_count }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>📂 Dépenses par catégorie</h2>
+    
+    {% if categories_data %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Catégorie</th>
+                    <th>Montant</th>
+                    <th>Pourcentage</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cat in categories_data %}
+                <tr>
+                    <td><strong>{{ cat.name }}</strong></td>
+                    <td>{{ "%.2f"|format(cat.amount) }} €</td>
+                    <td>
+                        {% set percentage = (cat.amount / summary.total_expenses * 100) if summary.total_expenses > 0 else 0 %}
+                        <div class="progress">
+                            <div class="progress-bar success" style="width: {{ percentage }}%">
+                                {{ "%.1f"|format(percentage) }}%
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; color: #6c757d; padding: 20px;">
+            Aucune dépense pour cette période
+        </p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>📅 Analyses avancées</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+            <h3 style="color: #667eea; margin-bottom: 15px;">Moyenne quotidienne</h3>
+            <p style="font-size: 2em; font-weight: bold; color: #333;">
+                {{ "%.2f"|format(avg_daily) }} €/jour
+            </p>
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+            <h3 style="color: #667eea; margin-bottom: 15px;">🔮 Prédiction fin de mois</h3>
+            <p style="font-size: 2em; font-weight: bold; color: #333;">
+                {{ "%.2f"|format(prediction) }} €
+            </p>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

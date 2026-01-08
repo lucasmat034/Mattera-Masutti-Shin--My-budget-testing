@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de bord - MyBudget{% endblock %}
+
+{% block content %}
+<h2 style="color: #667eea; font-size: 2em; margin-bottom: 30px;">📊 Tableau de bord</h2>
+
+<div class="stats-grid">
+    <div class="stat-card success">
+        <h3>💵 Revenus</h3>
+        <div class="value">{{ "%.2f"|format(total_revenue) }} €</div>
+    </div>
+    
+    <div class="stat-card danger">
+        <h3>💸 Dépenses</h3>
+        <div class="value">{{ "%.2f"|format(total_expense) }} €</div>
+    </div>
+    
+    <div class="stat-card">
+        <h3>💰 Balance</h3>
+        <div class="value">{{ "%.2f"|format(balance) }} €</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>État des budgets</h2>
+    
+    {% if budgets %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Catégorie</th>
+                    <th>Budget</th>
+                    <th>Dépensé</th>
+                    <th>Restant</th>
+                    <th>Progression</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for budget in budgets %}
+                <tr>
+                    <td><strong>{{ budget.category }}</strong></td>
+                    <td>{{ "%.2f"|format(budget.amount) }} €</td>
+                    <td>{{ "%.2f"|format(budget.spent) }} €</td>
+                    <td>{{ "%.2f"|format(budget.remaining) }} €</td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar {{ budget.status_class }}" 
+                                 style="width: {{ budget.percentage }}%">
+                                {{ "%.1f"|format(budget.percentage) }}%
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-{{ budget.status_class }}">
+                            {{ budget.status_text }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; color: #6c757d; padding: 40px;">
+            Aucun budget défini. <a href="{{ url_for('budgets') }}">Créer un budget</a>
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

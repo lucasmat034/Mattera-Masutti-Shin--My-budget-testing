@@ -21,7 +21,7 @@ class DatabaseManager:
         if db_path != ":memory:":
             Path(db_path).parent.mkdir(parents=True, exist_ok=True)
         
-        self.connection = sqlite3.connect(db_path)
+        self.connection = sqlite3.connect(db_path, check_same_thread=False)
         self.connection.row_factory = sqlite3.Row  # Permet d'accéder aux colonnes par nom
         self._create_tables()
     
