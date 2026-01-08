@@ -1,120 +1,114 @@
-# MyBudget - Gestionnaire de Budget Personnel 💰
+MyBudget - Personal Budget Management Tool
+MyBudget is a command-line personal budget management application developed in Python using TDD (Test-Driven Development) and BDD (Behavior-Driven Development) methodologies.
 
-Application de gestion de budget personnel développée en TDD/BDD.
 
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](.)
-[![Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)](.)
-[![Python](https://img.shields.io/badge/python-3.8%2B-blue)](.)
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+Overview
 
-## ✨ Fonctionnalités
+Features
 
-### MVP
-- ✅ Gestion des transactions (ajout, modification, suppression)
-- ✅ Gestion des budgets par catégorie
-- ✅ Consultation des statuts de budget
-- ✅ Filtrage et recherche de transactions
+Installation
 
-### Fonctionnalités Avancées
-- 🔔 **Alertes de dépassement** : Notifications automatiques
-- 📊 **Export CSV/JSON** : Export des données et rapports
-- 🔄 **Modification** : Modification/suppression de transactions
-- 📈 **Statistiques** : Analyses et prédictions avancées
+Quick Start
 
-## 🚀 Installation Rapide
+Usage
 
-```bash
-# Cloner le projet
-git clone <url-du-repo>
-cd mybudget
+Architecture
 
-# Installer
-pip install -e .
+Testing
 
-# Initialiser des données de démo (optionnel)
-python scripts/init_demo_data.py
-```
+Development
 
-## 💻 Utilisation
+Contributing
 
-```bash
-# Créer un budget
-mybudget budget alimentation 300 2026-01-01 2026-01-31
+License
 
-# Ajouter une dépense
-mybudget add 45.50 "Courses" alimentation 2026-01-05
+Overview
+MyBudget helps you manage your personal finances through an intuitive command-line interface. Track your income and expenses, create budgets by category, and get alerts when you're approaching or exceeding your budget limits.
 
-# Consulter le statut
-mybudget status alimentation 2026-01-01 2026-01-31
+Key Information
+Version: 1.0.0
 
-# Lister les transactions
-mybudget list --category alimentation --start 2026-01-01
-```
+License: MIT
 
-## 🧪 Tests
+Python: ≥ 3.8
 
-```bash
-# Tous les tests
-pytest
+Team: Mattera-Masutti-Shin
 
-# Tests avec couverture
-pytest --cov=src --cov-report=html
+Test Coverage: 85-89%
 
-# Vérification qualité complète
-python scripts/quality_check.py
-```
+Total Tests: 97+ tests (70+ unit, 15+ integration, 11 BDD scenarios)
 
-## 📊 Statistiques
+Features
+Core Features (MVP)
+1. Transaction Management
+Add transactions (income/expenses)
 
-- **Code source** : ~1150 lignes
-- **Tests** : 97+ tests (85-89% couverture)
-- **Documentation** : 6 fichiers
-- **Scénarios BDD** : 11 scénarios
+View all transactions
 
-## 📚 Documentation
+Filter by category, date, and type
 
-- [QUICKSTART.md](QUICKSTART.md) - Démarrage rapide
-- [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) - Guide de contribution
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - Architecture technique
-- [docs/BDD_SCENARIOS.md](docs/BDD_SCENARIOS.md) - Scénarios BDD
-- [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) - Résumé complet du projet
+Modify existing transactions
 
-## 🏗️ Architecture
+Delete transactions
 
-```
-src/
-├── models/          # Modèles de données
-├── services/        # Logique métier
-├── database/        # Gestion SQLite
-└── cli/             # Interface CLI
+2. Budget Management
+Create budgets by category
 
-tests/
-├── unit/            # Tests unitaires
-├── integration/     # Tests d'intégration
-└── features/        # Tests BDD
-```
+Define budget periods
 
-## 🛠️ Technologies
+Check budget status
 
-- **Python** 3.8+
-- **Click** (CLI)
-- **SQLite** (Base de données)
-- **pytest** (Tests)
-- **pytest-bdd** (Tests comportementaux)
+Automatic calculation of spent/remaining/percentage
 
-## 📜 Licence
+3. Predefined Categories
+Alimentation (Food)
 
-MIT License - Copyright (c) 2026 Équipe Mattera-Masutti-Shin
+Logement (Housing)
 
-## 👥 Équipe
+Loisirs (Leisure)
 
-- Mattera
-- Masutti
-- Shin
+Transports (Transportation)
 
-**Contact** : rida@lamerkanterie.fr
+Santé (Health)
 
----
+Autres (Other)
 
-Développé avec ❤️ en TDD/BDD
+Advanced Features
+4. Budget Alerts
+Automatic alerts when budget is exceeded
+
+Warning at 80% of budget
+
+Display of overspending percentage
+
+5. Data Export
+CSV export of all transactions
+
+JSON export with metadata
+
+Budget summary exports
+
+Filtering during export
+
+6. Transaction Modification
+Modify amount
+
+Change category
+
+Update date
+
+Automatic budget impact recalculation
+
+7. Advanced Statistics
+Complete monthly summary
+
+Category trends over multiple months
+
+Average spending
+
+Top recent expenses
+
+Analysis by day of week
+
+End-of-month predictions
 

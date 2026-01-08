@@ -122,11 +122,23 @@ class TransactionService:
             transaction.date.isoformat(),
             transaction_id
         )
-        rows_affected = self.db.execute_update(query, params)
-        return rows_affected > 0
+        cursor = self.db.connection.execute(
+            """
+            UPDATE transactions
+            SET amount = ?, description = ?, type = ?, category_id = ?, date = ?
+            WHERE id = ?
+            """,
+            (transaction.amount, transaction.description, transaction.type, transaction.category_id, transaction.date, transaction_id)
+        )
+        self.db.connection.commit()
+        return cursor.rowcount > 0
     
     def delete_transaction(self, transaction_id: int) -> bool:
         """Supprime une transaction"""
         query = "DELETE FROM transactions WHERE id = ?"
-        rows_affected = self.db.execute_update(query, (transaction_id,))
-        return rows_affected > 0
+        cursor = self.db.connection.execute(
+            "DELETE FROM transactions WHERE id = ?",
+            (transaction_id,)
+        )
+        self.db.connection.commit()
+        return cursor.rowcount > 0
