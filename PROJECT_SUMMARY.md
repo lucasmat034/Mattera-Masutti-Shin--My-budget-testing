@@ -10,10 +10,8 @@ C'est pourquoi nous avons fait deux fonctionnalités supplémentaires : la **A.*
 La fonctionnalité **C. Export et persistance** sera donc faite en BDD avec des commits au fur et à mesure de son développement.
 
 ### Informations Générales
-- **Version**: 1.0.0
-- **Licence**: MIT
 - **Python**: ≥ 3.8
-- **Date de création**: Janvier 2026
+- **Date de création**: Décembre 2025
 - **Équipe**: Mattera-Masutti-Shin
 - **Couverture de tests**: ≥ 85%
 
