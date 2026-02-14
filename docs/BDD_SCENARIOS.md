@@ -8,10 +8,11 @@ Ce document regroupe tous les scénarios BDD (Behavior-Driven Development) du pr
 2. [Export des Données](#export-des-données)
 3. [Modification et Suppression](#modification-et-suppression)
 4. [Gestion des Budgets](#gestion-des-budgets)
+5. [Reinitialisation des donnees](#reinitialisation-des-donnees)
 
 ---
 
-## 🔔 Alertes de Dépassement de Budget
+## Alertes de Dépassement de Budget
 
 ### Feature: Alerte de dépassement de budget
 
@@ -163,6 +164,26 @@ And chaque budget affiche son pourcentage de consommation
 
 ---
 
+## Reinitialisation des donnees
+
+### Feature: Reinitialisation des donnees
+
+**Fichier**: 	ests/features/reset.feature
+
+#### Scenario 1: Reinitialiser apres avoir saisi des donnees
+`gherkin
+Given des transactions existent
+And un budget existe
+When je reinitialise les donnees
+Then aucune transaction n'existe
+And aucun budget n'existe
+And les categories par defaut existent
+`
+
+**Objectif**: Permettre de repartir de zero tout en conservant les categories.
+
+---
+
 ## 🎯 Bonnes Pratiques BDD
 
 ### Format Gherkin
@@ -197,8 +218,9 @@ Chaque scénario est associé à :
 | Export | 3 | 12 | ✅ Complet |
 | Modification | 3 | 12 | ✅ Complet |
 | Gestion budgets | 2 | 8 | ✅ Complet |
+| Reinitialisation des donnees | 1 | 6 | ✅ Complet |
 
-**Total**: 11 scénarios, ~47 steps implémentés
+**Total**: 12 scénarios, ~53 steps implémentés
 
 ---
 
