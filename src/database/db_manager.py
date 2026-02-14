@@ -21,7 +21,7 @@ class DatabaseManager:
         if db_path != ":memory:":
             Path(db_path).parent.mkdir(parents=True, exist_ok=True)
         
-        self.connection = sqlite3.connect(db_path, check_same_thread=False)
+        self.connection = sqlite3.connect(db_path)
         self.connection.row_factory = sqlite3.Row  # Permet d'accéder aux colonnes par nom
         self._create_tables()
     
@@ -121,6 +121,16 @@ class DatabaseManager:
         self.connection.commit()
         return cursor.lastrowid if cursor.lastrowid else cursor.rowcount
     
+    def reset_data(self) -> None:
+        """
+        Reinitialise les donnees metier (transactions et budgets).
+
+        Les categories par defaut sont conservees.
+        """
+        self.connection.execute("DELETE FROM transactions")
+        self.connection.execute("DELETE FROM budgets")
+        self.connection.commit()
+
     def close(self):
         """Ferme la connexion à la base de données"""
         if self.connection:
