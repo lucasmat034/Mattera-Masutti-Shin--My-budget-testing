@@ -58,6 +58,43 @@ class TestCLIIntegration:
         assert result.exit_code == 0
         assert 'Budget' in result.output or 'budget' in result.output
     
+    def test_update_transaction_command(self, runner):
+        """Test: modification d'une transaction via CLI"""
+        runner.invoke(cli, ['reset', '--yes'])
+        runner.invoke(cli, ['add', '10', 'Test', 'alimentation', '2026-01-10'])
+
+        row = db.execute_query(
+            "SELECT id FROM transactions ORDER BY id DESC LIMIT 1"
+        )[0]
+        t_id = row['id']
+
+        result = runner.invoke(
+            cli,
+            ['update', str(t_id), '--amount', '25', '--description', 'Modifie']
+        )
+        assert result.exit_code == 0
+
+        updated = db.execute_query(
+            "SELECT amount, description FROM transactions WHERE id = ?",
+            (t_id,)
+        )[0]
+        assert updated['amount'] == 25
+        assert updated['description'] == 'Modifie'
+
+    def test_delete_transaction_command(self, runner):
+        """Test: suppression d'une transaction via CLI"""
+        runner.invoke(cli, ['reset', '--yes'])
+        runner.invoke(cli, ['add', '10', 'Test', 'alimentation', '2026-01-10'])
+
+        row = db.execute_query(
+            "SELECT id FROM transactions ORDER BY id DESC LIMIT 1"
+        )[0]
+        t_id = row['id']
+
+        result = runner.invoke(cli, ['delete', str(t_id), '--yes'])
+        assert result.exit_code == 0
+        assert db.execute_query("SELECT * FROM transactions WHERE id = ?", (t_id,)) == []
+
     def test_export_command_csv(self, runner, tmp_path):
         """Test: export des transactions en CSV via CLI"""
         runner.invoke(cli, ['reset', '--yes'])

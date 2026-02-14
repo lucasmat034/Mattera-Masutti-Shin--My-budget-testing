@@ -1,8 +1,6 @@
 MyBudget — Gestionnaire de budget en ligne de commande
 ======================================================
-`
 Application Python (≥3.8) pour suivre vos revenus/dépenses, créer des budgets par catégorie et recevoir des alertes de dépassement. Développée en TDD/BDD, licence MIT, équipe Mattera‑Masutti‑Shin.
-`
 Contenu du dépôt
 - CLI : `src/cli/main.py` (commande `mybudget`)
 - Services métier : `src/services/` (transactions, budgets, exports, statistiques)
@@ -38,6 +36,10 @@ Commandes disponibles (CLI Click)
   - Exemple : `mybudget add 45.50 "Courses Leclerc" alimentation 2026-01-05`
 - `mybudget list [--category <cat>] [--start <YYYY-MM-DD>] [--end <YYYY-MM-DD>] [--type depense|revenu]`
   - Affiche un tableau tabulé, ordre anti‑chronologique
+- `mybudget update <id> [--amount <montant>] [--description <texte>] [--category <categorie>] [--date <YYYY-MM-DD>] [--type depense|revenu]`
+  - Modifie une transaction existante
+- `mybudget delete <id> [--yes]`
+  - Supprime une transaction
 - `mybudget budget <categorie> <montant> <date_debut> <date_fin>`
   - Crée un budget pour une période donnée
 - `mybudget status <categorie> <date_debut> <date_fin>`
@@ -66,8 +68,8 @@ Exemples CLI :
 mybudget export --format csv --output export.csv
 mybudget export --format json --output export.json --pretty
 mybudget export-budget alimentation 2026-01-01 2026-01-31 --output budget.json
-`
 
+```
 Données et réinitialisation
 - Fichier SQLite : `data/budget.db` (créé au premier lancement).
 - Réinitialiser/démarrer avec des données de démo :

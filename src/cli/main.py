@@ -132,6 +132,86 @@ def list(category, start, end, type):
         click.echo(f"❌ Erreur: {e}")
 
 
+@cli.command()
+@click.argument('transaction_id', type=int)
+@click.option('--amount', type=float, help='Nouveau montant')
+@click.option('--description', help='Nouvelle description')
+@click.option('--category', help='Nouvelle categorie')
+@click.option('--date', 'date_str', help='Nouvelle date (YYYY-MM-DD)')
+@click.option('--type', '-t', type=click.Choice(['dépense', 'revenu']), help='Nouveau type')
+def update(transaction_id, amount, description, category, date_str, type):
+    """Modifie une transaction existante
+    
+    Exemple: mybudget update 12 --amount 50 --description "Correction"
+    """
+    try:
+        existing = transaction_service.get_transaction_by_id(transaction_id)
+        if not existing:
+            click.echo(f"❌ Transaction ID {transaction_id} introuvable")
+            return
+
+        if all(v is None for v in [amount, description, category, date_str, type]):
+            click.echo("Aucune modification demandee.")
+            return
+
+        category_id = existing.category_id
+        if category:
+            categories = db.execute_query("SELECT id FROM categories WHERE name = ?", (category,))
+            if not categories:
+                click.echo(f"❌ Categorie '{category}' inconnue")
+                return
+            category_id = categories[0]['id']
+
+        trans_date = existing.date
+        if date_str:
+            trans_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+
+        updated = Transaction(
+            amount=amount if amount is not None else existing.amount,
+            description=description if description is not None else existing.description,
+            type=type if type is not None else existing.type,
+            category_id=category_id,
+            date=trans_date
+        )
+
+        success = transaction_service.update_transaction(transaction_id, updated)
+        if success:
+            click.echo(f"✅ Transaction {transaction_id} modifiee")
+        else:
+            click.echo(f"❌ Impossible de modifier la transaction {transaction_id}")
+    except ValueError as e:
+        click.echo(f"❌ Erreur: {e}")
+    except Exception as e:
+        click.echo(f"❌ Erreur inattendue: {e}")
+
+
+@cli.command()
+@click.argument('transaction_id', type=int)
+@click.option('--yes', is_flag=True, help='Confirmer la suppression sans prompt')
+def delete(transaction_id, yes):
+    """Supprime une transaction
+    
+    Exemple: mybudget delete 12 --yes
+    """
+    try:
+        if not yes:
+            confirmed = click.confirm(
+                f"Supprimer la transaction {transaction_id} ?",
+                default=False
+            )
+            if not confirmed:
+                click.echo("Operation annulee.")
+                return
+
+        success = transaction_service.delete_transaction(transaction_id)
+        if success:
+            click.echo(f"✅ Transaction {transaction_id} supprimee")
+        else:
+            click.echo(f"❌ Transaction ID {transaction_id} introuvable")
+    except Exception as e:
+        click.echo(f"❌ Erreur: {e}")
+
+
 # ========== COMMANDES BUDGETS ==========
 
 @cli.command()
