@@ -1,114 +1,97 @@
-MyBudget - Personal Budget Management Tool
-MyBudget is a command-line personal budget management application developed in Python using TDD (Test-Driven Development) and BDD (Behavior-Driven Development) methodologies.
+MyBudget — Gestionnaire de budget en ligne de commande
+======================================================
+`
+Application Python (≥3.8) pour suivre vos revenus/dépenses, créer des budgets par catégorie et recevoir des alertes de dépassement. Développée en TDD/BDD, licence MIT, équipe Mattera‑Masutti‑Shin.
+`
+Contenu du dépôt
+- CLI : `src/cli/main.py` (commande `mybudget`)
+- Services métier : `src/services/` (transactions, budgets, exports, statistiques)
+- Modèles : `src/models/` (dataclasses avec validations)
+- Accès données : `src/database/db_manager.py` (SQLite `data/budget.db`, catégories par défaut)
+- Scripts : `scripts/` (données de démo, couverture, qualité)
+- Tests : `tests/` (unitaires, intégration, BDD)
 
+Prérequis
+- Python 3.8 ou plus récent
+- pip et, recommandé, un environnement virtuel
+- Système compatible SQLite (embarqué par défaut)
 
-Overview
+Installation rapide
+```bash
+python -m venv .venv
+.\.venv\Scripts\activate             # Windows
+pip install -e .
+# Pour le dev (tests, lint, coverage)
+pip install -e .[dev]
+```
 
-Features
+Premiers pas
+```bash
+mybudget --help
+mybudget list                        # aucune transaction au début
+```
+La base `data/budget.db` est créée automatiquement avec les catégories : alimentation, logement, loisirs, transports, santé, autres.
 
-Installation
+Commandes disponibles (CLI Click)
+- `mybudget add <montant> "<description>" <categorie> [date] [--type depense|revenu]`
+  - Date optionnelle au format ISO `YYYY-MM-DD` (défaut : aujourd’hui)
+  - Exemple : `mybudget add 45.50 "Courses Leclerc" alimentation 2026-01-05`
+- `mybudget list [--category <cat>] [--start <YYYY-MM-DD>] [--end <YYYY-MM-DD>] [--type depense|revenu]`
+  - Affiche un tableau tabulé, ordre anti‑chronologique
+- `mybudget budget <categorie> <montant> <date_debut> <date_fin>`
+  - Crée un budget pour une période donnée
+- `mybudget status <categorie> <date_debut> <date_fin>`
+  - Montant, dépensé, restant, %, alerte à 80 % et en cas de dépassement
+- `mybudget export --format <csv|json> --output <fichier> [--category <cat>] [--start <YYYY-MM-DD>] [--end <YYYY-MM-DD>]`
+  - Exporte les transactions en CSV/JSON
+- `mybudget export-budget <categorie> <date_debut> <date_fin> --output <fichier>`
+  - Exporte un resume de budget en JSON
+- `mybudget reset [--yes]`
+  - Reinitialise transactions et budgets (categories conservees)
 
-Quick Start
+Exemple de session
+```bash
+mybudget budget alimentation 300 2026-01-01 2026-01-31
+mybudget add 25.90 "Déjeuner" alimentation 2026-01-03
+mybudget add 180 "Courses semaine" alimentation 2026-01-05
+mybudget status alimentation 2026-01-01 2026-01-31
+mybudget list --category alimentation --start 2026-01-01 --end 2026-01-31
+```
+Les alertes de dépassement s’affichent automatiquement après chaque `add` si un budget actif est franchi.
 
-Usage
+Exports et statistiques
+- Services prêts à l’emploi dans `src/services/export_service.py` et `statistics_service.py` (CSV/JSON, résumés, tendances, projections). Ils peuvent être appelés depuis du code Python ou branchés à d’autres interfaces.
+Exemples CLI :
+```bash
+mybudget export --format csv --output export.csv
+mybudget export --format json --output export.json --pretty
+mybudget export-budget alimentation 2026-01-01 2026-01-31 --output budget.json
+`
 
-Architecture
+Données et réinitialisation
+- Fichier SQLite : `data/budget.db` (créé au premier lancement).
+- Réinitialiser/démarrer avec des données de démo :
+  ```bash
+  python scripts/init_demo_data.py
+  ```
+- Supprimer la base pour repartir de zéro : effacer `data/budget.db`.
+- Reinitialiser les donnees (transactions/budgets) :
+  ```bash
+  mybudget reset --yes
+  ```
 
-Testing
+Tests et qualité
+- `make test`          : pytest sur `tests/`
+- `make coverage`      : couverture HTML dans `tests/htmlcov`
+- `make quality`       : couverture minimale 80 %, flake8, black (mode check)
+- `make demo`          : remplit la base avec des données exemples
+- Commandes directes : `pytest -v`, `pytest --cov=src --cov-report=term-missing`
 
-Development
+Support rapide
+- Questions fréquentes et architecture : `PROJECT_SUMMARY.md` et `docs/ARCHITECTURE.md`
+- Scénarios BDD : `docs/BDD_SCENARIOS.md`
+- Contribution : `docs/CONTRIBUTING.md`
 
-Contributing
-
-License
-
-Overview
-MyBudget helps you manage your personal finances through an intuitive command-line interface. Track your income and expenses, create budgets by category, and get alerts when you're approaching or exceeding your budget limits.
-
-Key Information
-Version: 1.0.0
-
-License: MIT
-
-Python: ≥ 3.8
-
-Team: Mattera-Masutti-Shin
-
-Test Coverage: 85-89%
-
-Total Tests: 97+ tests (70+ unit, 15+ integration, 11 BDD scenarios)
-
-Features
-Core Features (MVP)
-1. Transaction Management
-Add transactions (income/expenses)
-
-View all transactions
-
-Filter by category, date, and type
-
-Modify existing transactions
-
-Delete transactions
-
-2. Budget Management
-Create budgets by category
-
-Define budget periods
-
-Check budget status
-
-Automatic calculation of spent/remaining/percentage
-
-3. Predefined Categories
-Alimentation (Food)
-
-Logement (Housing)
-
-Loisirs (Leisure)
-
-Transports (Transportation)
-
-Santé (Health)
-
-Autres (Other)
-
-Advanced Features
-4. Budget Alerts
-Automatic alerts when budget is exceeded
-
-Warning at 80% of budget
-
-Display of overspending percentage
-
-5. Data Export
-CSV export of all transactions
-
-JSON export with metadata
-
-Budget summary exports
-
-Filtering during export
-
-6. Transaction Modification
-Modify amount
-
-Change category
-
-Update date
-
-Automatic budget impact recalculation
-
-7. Advanced Statistics
-Complete monthly summary
-
-Category trends over multiple months
-
-Average spending
-
-Top recent expenses
-
-Analysis by day of week
-
-End-of-month predictions
+Licence
+- MIT License (voir `LICENSE`).
 

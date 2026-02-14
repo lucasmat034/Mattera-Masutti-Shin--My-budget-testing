@@ -1,10 +1,10 @@
 # tests/integration/test_cli_integration.py
 
 import pytest
+import json
 from click.testing import CliRunner
 from datetime import date
-from src.cli.main import cli
-from src.database.db_manager import DatabaseManager
+from src.cli.main import cli, db
 
 class TestCLIIntegration:
     """Tests d'intégration de l'interface CLI"""
@@ -58,6 +58,54 @@ class TestCLIIntegration:
         assert result.exit_code == 0
         assert 'Budget' in result.output or 'budget' in result.output
     
+    def test_export_command_csv(self, runner, tmp_path):
+        """Test: export des transactions en CSV via CLI"""
+        runner.invoke(cli, ['reset', '--yes'])
+        runner.invoke(cli, ['add', '10', 'Test', 'alimentation', '2026-01-10'])
+
+        output = tmp_path / "export.csv"
+        result = runner.invoke(cli, ['export', '--format', 'csv', '--output', str(output)])
+
+        assert result.exit_code == 0
+        assert output.exists()
+        with open(output, 'r', encoding='utf-8') as f:
+            lines = f.read().splitlines()
+            assert len(lines) >= 2  # header + at least one row
+
+    def test_export_budget_command_json(self, runner, tmp_path):
+        """Test: export du resume budget en JSON via CLI"""
+        runner.invoke(cli, ['reset', '--yes'])
+        runner.invoke(cli, ['budget', 'alimentation', '100', '2026-01-01', '2026-01-31'])
+        runner.invoke(cli, ['add', '10', 'Test', 'alimentation', '2026-01-10'])
+
+        output = tmp_path / "budget.json"
+        result = runner.invoke(
+            cli,
+            ['export-budget', 'alimentation', '2026-01-01', '2026-01-31', '-o', str(output)]
+        )
+
+        assert result.exit_code == 0
+        assert output.exists()
+        with open(output, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            assert 'budget' in data
+            assert 'transactions' in data
+
+    def test_reset_command(self, runner):
+        """Test: reinitialisation des donnees via CLI"""
+        # Ajouter des donnees
+        runner.invoke(cli, ['add', '10', 'Test', 'alimentation', '2026-01-10'])
+        runner.invoke(cli, ['budget', 'alimentation', '100', '2026-01-01', '2026-01-31'])
+
+        # Reinitialiser
+        result = runner.invoke(cli, ['reset', '--yes'])
+        assert result.exit_code == 0
+
+        # Verifier la base
+        assert len(db.execute_query("SELECT * FROM transactions")) == 0
+        assert len(db.execute_query("SELECT * FROM budgets")) == 0
+        assert len(db.execute_query("SELECT * FROM categories")) >= 6
+
     def test_invalid_category(self, runner):
         """Test: tentative avec catégorie invalide"""
         result = runner.invoke(cli, ['add', '50', 'Test', 'categorie_inexistante', '2026-01-10'])

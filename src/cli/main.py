@@ -6,6 +6,7 @@ from tabulate import tabulate
 from src.database.db_manager import DatabaseManager
 from src.services.transaction_service import TransactionService
 from src.services.budget_service import BudgetService
+from src.services.export_service import ExportService
 from src.models.transaction import Transaction
 from src.models.budget import Budget
 
@@ -13,6 +14,7 @@ from src.models.budget import Budget
 db = DatabaseManager()
 transaction_service = TransactionService(db)
 budget_service = BudgetService(db, transaction_service)
+export_service = ExportService(db, transaction_service)
 
 @click.group()
 def cli():
@@ -216,6 +218,108 @@ def status(category, start_date, end_date):
         
     except Exception as e:
         click.echo(f"❌ Erreur: {e}")
+
+
+@cli.command()
+@click.option('--format', 'format_', type=click.Choice(['csv', 'json']), required=True)
+@click.option('--output', '-o', required=True, help='Chemin du fichier a creer')
+@click.option('--category', '-c', help='Filtrer par categorie')
+@click.option('--start', '-s', help='Date de debut (YYYY-MM-DD)')
+@click.option('--end', '-e', help='Date de fin (YYYY-MM-DD)')
+@click.option('--pretty/--compact', default=True, help='Format JSON lisible')
+def export(format_, output, category, start, end, pretty):
+    """Exporte les transactions en CSV ou JSON
+    
+    Exemple: mybudget export --format csv --output export.csv
+    """
+    try:
+        category_id = None
+        if category:
+            categories = db.execute_query("SELECT id FROM categories WHERE name = ?", (category,))
+            if not categories:
+                click.echo(f"❌ Categorie '{category}' inconnue")
+                return
+            category_id = categories[0]['id']
+
+        start_date = datetime.strptime(start, '%Y-%m-%d').date() if start else None
+        end_date = datetime.strptime(end, '%Y-%m-%d').date() if end else None
+
+        if format_ == 'csv':
+            count = export_service.export_transactions_to_csv(
+                output,
+                category_id=category_id,
+                start_date=start_date,
+                end_date=end_date
+            )
+        else:
+            count = export_service.export_transactions_to_json(
+                output,
+                category_id=category_id,
+                start_date=start_date,
+                end_date=end_date,
+                pretty=pretty
+            )
+
+        click.echo(f"✅ Export termine: {count} transaction(s) -> {output}")
+    except Exception as e:
+        click.echo(f"❌ Erreur: {e}")
+
+
+@cli.command(name='export-budget')
+@click.argument('category')
+@click.argument('start_date')
+@click.argument('end_date')
+@click.option('--output', '-o', required=True, help='Chemin du fichier JSON a creer')
+def export_budget(category, start_date, end_date, output):
+    """Exporte un resume de budget en JSON
+    
+    Exemple: mybudget export-budget alimentation 2026-01-01 2026-01-31 -o budget.json
+    """
+    try:
+        categories = db.execute_query("SELECT id FROM categories WHERE name = ?", (category,))
+        if not categories:
+            click.echo(f"❌ Categorie '{category}' inconnue")
+            return
+        category_id = categories[0]['id']
+
+        period_start = datetime.strptime(start_date, '%Y-%m-%d').date()
+        period_end = datetime.strptime(end_date, '%Y-%m-%d').date()
+
+        success = export_service.export_budget_summary_to_json(
+            output,
+            category_id=category_id,
+            period_start=period_start,
+            period_end=period_end
+        )
+        if not success:
+            click.echo("❌ Aucun budget trouve pour cette periode")
+            return
+
+        click.echo(f"✅ Export termine -> {output}")
+    except Exception as e:
+        click.echo(f"❌ Erreur: {e}")
+
+
+@cli.command()
+@click.option('--yes', is_flag=True, help='Confirmer la reinitialisation sans prompt')
+def reset(yes):
+    """Reinitialise les transactions et budgets
+    
+    Exemple: mybudget reset --yes
+    """
+    try:
+        if not yes:
+            confirmed = click.confirm(
+                "Reinitialiser toutes les transactions et budgets ?",
+                default=False
+            )
+            if not confirmed:
+                click.echo("Operation annulee.")
+                return
+        db.reset_data()
+        click.echo("âœ… Donnees reinitialisees (transactions et budgets supprimes, categories conservees).")
+    except Exception as e:
+        click.echo(f"âŒ Erreur: {e}")
 
 
 def check_budget_alert(category_id, trans_date):
