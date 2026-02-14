@@ -1,8 +1,13 @@
-# 📊 PROJECT_SUMMARY.md - Résumé Complet du Projet MyBudget
+# PROJECT_SUMMARY.md - Résumé Complet du Projet MyBudget
 
-## 🎯 Vue d'Ensemble
+## Vue d'Ensemble
 
 **MyBudget** est une application de gestion de budget personnel en ligne de commande, développée en Python avec les méthodologies TDD (Test-Driven Development) et BDD (Behavior-Driven Development).
+
+## Déroulé de la mise en place
+Comme évoqué durant notre dernier cours, nous avons fait l'erreur de développer ce projet entiérement **AVANT** de le commit, ce qui fait que nous avons pas tous les commits de mise en place au fur et à mesure de la production de ce projet.
+C'est pourquoi nous avons fait deux fonctionnalités supplémentaires : la **A.** (BDD) et la **C.** (TDD).
+La fonctionnalité **C. Export et persistance** sera donc faite en BDD avec des commits au fur et à mesure de son développement.
 
 ### Informations Générales
 - **Version**: 1.0.0
@@ -14,7 +19,7 @@
 
 ---
 
-## ✨ Fonctionnalités
+## Fonctionnalités
 
 ### MVP (Minimum Viable Product)
 
@@ -41,24 +46,24 @@
 
 ### Fonctionnalités Avancées
 
-#### 4. Alertes de Dépassement 🔔
+#### 4. Alertes de Dépassement 
 - Alerte automatique si budget dépassé
 - Avertissement à 80% du budget
 - Affichage du pourcentage de dépassement
 
-#### 5. Export de Données 📊
+#### 5. Export de Données 
 - Export CSV de toutes les transactions
 - Export JSON avec métadonnées
 - Export de résumés de budget
 - Filtrage lors de l'export
 
-#### 6. Modification de Transactions 🔄
+#### 6. Modification de Transactions 
 - Modification du montant
 - Changement de catégorie
 - Modification de la date
 - Impact automatique sur les budgets
 
-#### 7. Statistiques Avancées 📈
+#### 7. Statistiques Avancées 
 - Résumé mensuel complet
 - Tendances par catégorie sur plusieurs mois
 - Moyenne des dépenses
@@ -68,7 +73,7 @@
 
 ---
 
-## 🏗️ Architecture Technique
+## Architecture Technique
 
 ### Structure du Projet
 
@@ -115,7 +120,7 @@ mybudget/
 
 ---
 
-## 📊 Statistiques du Projet
+## Statistiques du Projet
 
 ### Code Source
 - **Modèles**: 3 fichiers (~150 lignes)
@@ -141,7 +146,7 @@ mybudget/
 
 ---
 
-## 🧪 Qualité et Tests
+## Qualité et Tests
 
 ### Méthode TDD/BDD
 
@@ -165,19 +170,28 @@ mybudget/
 | CLI | 75% | 15 tests intégration |
 | **Global** | **85-89%** | **97+ tests** |
 
-### Scénarios BDD
+### Exemple scénario BDD
 
-| Feature | Scénarios | Fichier |
-|---------|-----------|---------|
-| Alertes budget | 3 | budget_alert.feature |
-| Export | 3 | export.feature |
-| Modification | 3 | modification.feature |
-| Gestion budgets | 2 | (intégré) |
-| **Total** | **11** | **4 features** |
+Feature: Saisie des transactions et suivi d’un budget
+En tant qu’utilisateur
+Je souhaite enregistrer mes dépenses et suivre un budget par catégorie
+Afin de contrôler mes finances mensuelles
+
+Scenario: Ajouter des dépenses et consulter le budget alimentation de janvier
+Avec un budget de 300 € pour la catégorie "alimentation" du 2026-01-01 au 2026-01-31
+Et aucune transaction n’existe pour cette période
+Quand j’ajoute une dépense de 50 € "Courses Leclerc" en "alimentation" le 2026-01-05
+Et j’ajoute une dépense de 70 € "Restaurant" en "alimentation" le 2026-01-12
+Et je liste les transactions de "alimentation" entre le 2026-01-01 et le 2026-01-31
+Alors je vois 2 transactions
+Et le total dépensé est de 120 €
+Et le montant restant est de 180 €
+Et le pourcentage consommé est de 40 %
+
 
 ---
 
-## 📦 Installation et Utilisation
+## Installation et Utilisation
 
 ### Installation Rapide
 
@@ -220,7 +234,7 @@ mybudget list --category alimentation --start 2026-01-01
 
 ---
 
-## 🎓 Apprentissages et Bonnes Pratiques
+## Apprentissages et Bonnes Pratiques
 
 ### Appliqué dans ce Projet
 
@@ -242,15 +256,6 @@ mybudget list --category alimentation --start 2026-01-01
 - **Factory Pattern** : Création d'objets
 
 ---
-
-## 🚀 Roadmap et Évolutions
-
-### Réalisé (v1.0)
-- [x] MVP complet avec CRUD
-- [x] 4 fonctionnalités avancées
-- [x] Tests complets (TDD/BDD)
-- [x] Documentation exhaustive
-- [x] Couverture ≥ 80%
 
 ### Futures Évolutions (v2.0)
 - [ ] API REST (FastAPI)
@@ -283,8 +288,6 @@ mybudget list --category alimentation --start 2026-01-01
 | Architecture claire | ✅ | Couches séparées |
 | Git avec commits réguliers | ✅ | Historique complet |
 
-**Score attendu** : 20/20 ✨
-
 ---
 
 ## 👥 Contribution
@@ -296,48 +299,12 @@ mybudget list --category alimentation --start 2026-01-01
 
 ### Contact
 - Email: rida@lamerkanterie.fr
-- GitHub: [lien-du-repo]
-
-### Comment Contribuer
-Voir [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
+- GitHub: [https://github.com/lucasmat034/Mattera-Masutti-Shin--My-budget-testing.git]
 
 ---
 
-## 📄 Licence
-
-Ce projet est sous licence **MIT License**.
-
-Copyright (c) 2026 Équipe Mattera-Masutti-Shin
-
----
-
-## 🏆 Points Forts du Projet
-
-1. ✅ **Architecture professionnelle** : Séparation claire des responsabilités
-2. ✅ **Tests exhaustifs** : Plus de tests que de code !
-3. ✅ **Documentation complète** : 6 fichiers de documentation
-4. ✅ **TDD/BDD rigoureux** : Méthodologies appliquées correctement
-5. ✅ **Code maintenable** : Formaté, typé, documenté
-6. ✅ **Couverture excellente** : 85-89%
-7. ✅ **Fonctionnalités riches** : Au-delà des exigences minimales
-8. ✅ **Prêt pour production** : CI/CD configuré, scripts fournis
-
----
-
-## 📞 Support
+## Support
 
 Pour toute question :
 1. Consulter la documentation dans `docs/`
 2. Voir les exemples dans `QUICKSTART.md`
-3. Ouvrir une issue sur GitHub
-4. Contacter l'équipe par email
-
----
-
-**Dernière mise à jour** : 8 janvier 2026  
-**Version** : 1.0.0  
-**Statut** : Production Ready ✅
-
----
-
-*MyBudget - Gérez votre budget simplement !* 💰
