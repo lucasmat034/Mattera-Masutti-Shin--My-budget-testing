@@ -232,6 +232,34 @@ mybudget list --category alimentation --start 2026-01-01
 
 ---
 
+## Commandes Par Fonctionnalite (Resume)
+
+Voir la liste complete dans `docs/COMMANDS_BY_FEATURE.md`.
+
+MVP (transactions et budgets)
+```bash
+mybudget add 25.50 "Courses Leclerc" alimentation 2026-01-06
+mybudget list --category alimentation --start 2026-01-01 --end 2026-01-31
+mybudget budget alimentation 300 2026-01-01 2026-01-31
+mybudget status alimentation 2026-01-01 2026-01-31
+```
+
+A. Gestion avancee des transactions
+```bash
+mybudget update 12 --amount 50 --description "Correction"
+mybudget delete 12 --yes
+mybudget list --type revenu --start 2026-01-01 --end 2026-01-31
+```
+
+C. Export et persistance
+```bash
+mybudget export --format csv --output export.csv
+mybudget export-budget alimentation 2026-01-01 2026-01-31 --output budget.json
+mybudget reset --yes
+```
+
+---
+
 ## Apprentissages et Bonnes Pratiques
 
 ### Appliqué dans ce Projet
