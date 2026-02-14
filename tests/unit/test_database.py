@@ -1,5 +1,3 @@
-# tests/unit/test_database.py
-
 import pytest
 from datetime import date
 from src.database.db_manager import DatabaseManager
@@ -101,6 +99,33 @@ class TestDatabaseManager:
         
         db.close()
     
+    def test_reset_data_clears_transactions_and_budgets(self):
+        """Test: reset data"""
+        db = DatabaseManager(":memory:")
+
+        # Insert a transaction and a budget
+        db.execute_update(
+            "INSERT INTO transactions (amount, description, type, category_id, date) VALUES (?, ?, ?, ?, ?)",
+            (25.0, "Test", "dépense", 1, "2026-01-10")
+        )
+        db.execute_update(
+            "INSERT INTO budgets (category_id, amount, period_start, period_end) VALUES (?, ?, ?, ?)",
+            (1, 200.0, "2026-01-01", "2026-01-31")
+        )
+
+        assert len(db.execute_query("SELECT * FROM transactions")) == 1
+        assert len(db.execute_query("SELECT * FROM budgets")) == 1
+
+        # Reset
+        db.reset_data()
+
+        # Transactions and budgets cleared, categories preserved
+        assert len(db.execute_query("SELECT * FROM transactions")) == 0
+        assert len(db.execute_query("SELECT * FROM budgets")) == 0
+        assert len(db.execute_query("SELECT * FROM categories")) == 6
+
+        db.close()
+
     def test_context_manager(self):
         """Test: utilisation comme context manager"""
         with DatabaseManager(":memory:") as db:
